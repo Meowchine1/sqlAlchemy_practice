@@ -12,6 +12,7 @@ class User(Base):
     recomendationCount = Column(Integer, nullable=False)
     rate = Column(Integer, nullable=False)
     recomendations = relationship("Recomendation", back_populates="user")
+    chatId = Column(String(250), nullable=False)
     
     def __repr__(self):
        return "Username='%s', date='%s'" % (

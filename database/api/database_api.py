@@ -17,9 +17,10 @@ def getDbUrl():
     return url
 
 
-engine = create_engine(getDbUrl())
+ 
 
 def add(entity):
+    engine = create_engine(getDbUrl())
     with Session(engine) as session:
         session.begin()
         try:
@@ -31,6 +32,7 @@ def add(entity):
             session.commit()
 
 def delete(entity):
+    engine = create_engine(getDbUrl())
     with Session(engine) as session:
         session.begin()
         try:
@@ -43,6 +45,7 @@ def delete(entity):
             
 
 def update(entity):
+    engine = create_engine(getDbUrl())
     with Session(engine) as session:
         session.begin()
         try:
@@ -53,9 +56,9 @@ def update(entity):
         else:
             session.commit()
             
-            
-
-if __name__ == "__main__":
+          
+def test_api():
+    engine = create_engine(getDbUrl())
     # Creates a new session to the database by using the engine we described.
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -64,7 +67,7 @@ if __name__ == "__main__":
     ed_user = User(username="@someuser", date="somedate", recomendationCount=0, rate=0)
     ed_film = Film(name="somefilm")
 
-    ed_rec = Recomendation(userId=ed_user.id, filmId=ed_film.id)
+    ed_rec = Recomendation(userId=ed_user.id, filmId=ed_film.id, date="some")
     ed_user.recomendations = [ed_rec]
     ed_film.recomendations = [ed_rec]
 
@@ -101,4 +104,3 @@ if __name__ == "__main__":
     
 
 # -----------------------------------
- 
