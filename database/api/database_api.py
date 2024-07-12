@@ -11,8 +11,8 @@ import configparser
 
 def getDbUrl():
     config = configparser.ConfigParser()
-    config.read('alembic.ini')
-    url = config.get('alembic', 'sqlalchemy.url')
+    config.read('config.ini')
+    url = config.get('config', 'db.url')
     print(url)
     return url
 
