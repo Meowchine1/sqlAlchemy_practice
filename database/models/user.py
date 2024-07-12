@@ -5,14 +5,11 @@ from .Base  import Base
 class User(Base):
     __tablename__ = 'users'
     
-    id = Column(Integer, primary_key=True,  autoincrement=True)
+    chatId = Column(String(250), nullable=False,  primary_key=True)
     username = Column(String(20), nullable=False)
     date = Column(String(20), nullable=False)
-    #age = Column(Integer)
-    recomendationCount = Column(Integer, nullable=False)
     rate = Column(Integer, nullable=False)
     recomendations = relationship("Recomendation", back_populates="user")
-    chatId = Column(String(250), nullable=False)
     
     def __repr__(self):
        return "Username='%s', date='%s'" % (

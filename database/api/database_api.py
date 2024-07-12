@@ -2,12 +2,12 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, joinedload
+from sqlalchemy.sql import func
+from sqlalchemy import select
 
-from database.models.film import Film
-from database.models.user import User
-from database.models.recomendation import Recomendation
+from database.models.Base import Base, Film, User, Recomendation
+
 import configparser
-
 
 def getDbUrl():
     config = configparser.ConfigParser()
@@ -16,8 +16,12 @@ def getDbUrl():
     print(url)
     return url
 
+def create_ifNotExist():
+    url = getDbUrl()
+    engine = create_engine(url)
+    # Create all tables by issuing CREATE TABLE if not exist commands to the DB.
+    Base.metadata.create_all(engine) 
 
- 
 
 def add(entity):
     engine = create_engine(getDbUrl())
@@ -36,7 +40,7 @@ def delete(entity):
     with Session(engine) as session:
         session.begin()
         try:
-            session.add(entity)
+            session.delete(entity)
         except:
             session.rollback()
             raise
@@ -45,37 +49,77 @@ def delete(entity):
             
 
 def update(entity):
+    pass
+
+
+def get_film_score(film):
     engine = create_engine(getDbUrl())
     with Session(engine) as session:
+        
         session.begin()
-        try:
-            session.add(entity)
-        except:
-            session.rollback()
-            raise
+        
+        if type(film) == int:
+            return session.query(func.avg(Recomendation.score))\
+            .filter(Recomendation.filmId == film)\
+                .scalar()
+                
+        elif type(film) == str:
+            filmid = session.query(Film.id).filter(Film.name == film)
+            return session.query(func.avg(Recomendation.score))\
+            .filter(Recomendation.filmId == filmid)\
+                .scalar()
         else:
-            session.commit()
-            
-          
+            raise Exception("Incorrect input data: expected filmid or name") 
+         
+        
+        
+        
+def get_film_by_name(film_name):
+    pass
+           
+
+def get_user_byChatId(chatId):
+    pass
+
+
+def get_user_recomendations(chatId):
+    pass
+
+
+def get_film_recomendations(filmId):
+    pass
+
+
+      
 def test_api():
+
     engine = create_engine(getDbUrl())
-    # Creates a new session to the database by using the engine we described.
     Session = sessionmaker(bind=engine)
     session = Session()
-
-    # Let's create a user and add two e-mail addresses to that user.
-    ed_user = User(username="@someuser", date="somedate", recomendationCount=0, rate=0)
-    ed_film = Film(name="somefilm")
-
-    ed_rec = Recomendation(userId=ed_user.id, filmId=ed_film.id, date="some")
-    ed_user.recomendations = [ed_rec]
-    ed_film.recomendations = [ed_rec]
-
     
-    # Let's add the user and its addresses we've created to the DB and commit.
-    session.add(ed_user)
-    session.add(ed_film)
-    session.add(ed_rec)
+    users = [
+        User(username="Kate", date="somedate", rate=0, chatId="chatId1"),
+        User(username="@Ivan", date="somedate", rate=0, chatId="chatId2"),
+        User(username="@Olga", date="somedate", rate=0, chatId="chatId3"),
+        User(username="@Ibragim", date="somedate", rate=0, chatId="chatId4")
+        
+    ]
+    
+    film = Film(name="Leon")
+     
+    
+    recomendations = []
+    for u, score in zip(users, range(len(users))):
+        r = Recomendation(score=score)
+        recomendations.append(r)
+        u.recomendations = [r]
+        film.recomendations += [r]
+    
+    session.add(film)
+    for u, r in zip(users, recomendations):
+        session.add(u)
+        session.add(r)
+    
     session.commit()
 
     # Now let's query the user that has the e-mail address ed@google.com
