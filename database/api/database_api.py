@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, joinedload
 from sqlalchemy.sql import func
 from sqlalchemy import select
 
-from database.models.Base import Base, Film, User, Recomendation
+from database.models.DbModel import Base, Film, User, Recomendation
 
 import configparser
 

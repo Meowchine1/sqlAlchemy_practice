@@ -5,10 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from database.models.Base import Base
-from database.models.film import Film
-from database.models.user import User
-from database.models.recomendation import Recomendation
+from database.models.DbModel import Base
 
 
 target_metadata = Base.metadata
